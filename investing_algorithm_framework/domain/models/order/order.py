@@ -48,6 +48,8 @@ class Order(BaseModel):
         metadata=None,
         stop_price=None,
         triggered_at=None,
+        take_profit_price=None,
+        stop_loss_price=None,
     ):
         if target_symbol is None:
             raise OperationalException("Target symbol is not specified")
@@ -96,6 +98,8 @@ class Order(BaseModel):
         self.metadata = metadata if metadata is not None else {}
         self.stop_price = stop_price
         self.triggered_at = triggered_at
+        self.take_profit_price = take_profit_price
+        self.stop_loss_price = stop_loss_price
 
     def get_id(self):
         return self.id
@@ -341,6 +345,8 @@ class Order(BaseModel):
             metadata=data.get("metadata", {}),
             stop_price=data.get("stop_price", None),
             triggered_at=triggered_at,
+            take_profit_price=data.get("take_profit_price", None),
+            stop_loss_price=data.get("stop_loss_price", None),
         )
         return order
 
@@ -410,6 +416,8 @@ class Order(BaseModel):
             remaining=self.get_remaining(),
             created_at=self.get_created_at(),
             updated_at=self.get_updated_at(),
+            take_profit_price=self.get_take_profit_price(),
+            stop_loss_price=self.get_stop_loss_price(),
         )
 
     @property
@@ -437,3 +445,54 @@ class Order(BaseModel):
             price = self.estimated_price
 
         return self.get_amount() * price if price is not None else 0
+
+    def get_take_profit_price(self):
+        return self.take_profit_price
+
+    def set_take_profit_price(self, price):
+        self.take_profit_price = price
+
+    def get_stop_loss_price(self):
+        return self.stop_loss_price
+
+    def set_stop_loss_price(self, price):
+        self.stop_loss_price = price
+
+    @staticmethod
+    def from_lots(
+        order_side,
+        lot_size,
+        lots: int,
+        pair: str,
+        order_type="MARKET",
+        price=None,
+        stop_price=None,
+        take_profit_price=None,
+        stop_loss_price=None,
+        status=None,
+        **kwargs,
+    ):
+        from investing_algorithm_framework.domain.models.forex import (
+            ForexPair,
+            LotSize,
+        )
+
+        if isinstance(lot_size, str):
+            lot_size = LotSize.from_string(lot_size)
+
+        amount = lot_size.to_units() * lots
+        fx_pair = ForexPair.from_symbol(pair)
+
+        return Order(
+            order_type=order_type,
+            order_side=order_side,
+            amount=amount,
+            target_symbol=fx_pair.base,
+            trading_symbol=fx_pair.quote,
+            price=price,
+            stop_price=stop_price,
+            take_profit_price=take_profit_price,
+            stop_loss_price=stop_loss_price,
+            status=status,
+            **kwargs,
+        )

@@ -34,6 +34,9 @@ from .blotter import Blotter, DefaultBlotter, SimulationBlotter, Transaction, \
     CommissionModel, NoCommission, PercentageCommission, FixedCommission, \
     FillModel, FullFill, VolumeBasedFill
 from .fx import FXRateProvider, StaticFXRateProvider
+from .fx_providers import CrossRateFXRateProvider
+from .models.forex import ForexPair, LotSize, PipCalculator, SwapRate, \
+    MarginRequirement, ForexMarketCalendar, ForexPairConfiguration
 from .services import MarketCredentialService, AbstractPortfolioSyncService, \
     RoundingService, StateHandler
 from .stateless_actions import StatelessActions
@@ -187,6 +190,14 @@ __all__ = [
     "VolumeBasedFill",
     "FXRateProvider",
     "StaticFXRateProvider",
+    "CrossRateFXRateProvider",
+    "ForexPair",
+    "LotSize",
+    "PipCalculator",
+    "SwapRate",
+    "MarginRequirement",
+    "ForexMarketCalendar",
+    "ForexPairConfiguration",
     "SyncResult",
     "ScheduledDeposit",
     "PortfolioOutOfSyncError",

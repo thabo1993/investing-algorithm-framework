@@ -1,0 +1,65 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md",
+    ".specify/memory/constitution.md",
+    "design-system/MASTER.md"
+  ],
+  "agent": {
+    "mvp-architect": {
+      "description": "Senior full-stack engineer who designs and builds a production-ready startup MVP from scratch",
+      "mode": "subagent",
+      "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "bash": "allow" }
+    },
+    "backend-architect": {
+      "description": "Senior systems architect designing scalable backend infrastructure",
+      "mode": "subagent",
+      "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "bash": "allow" }
+    },
+    "clean-architect": {
+      "description": "Senior software architect who rebuilds messy production code using clean-architecture principles",
+      "mode": "subagent",
+      "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "bash": "allow" }
+    },
+    "frontend-engineer": {
+      "description": "Senior frontend engineer building production-grade UI systems",
+      "mode": "subagent",
+      "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "bash": "allow" }
+    },
+    "tech-lead": {
+      "description": "Senior technical lead who thinks before coding: clarifies, challenges, weighs tradeoffs",
+      "mode": "subagent",
+      "permission": { "read": "allow", "glob": "allow", "grep": "allow", "bash": "allow", "edit": "deny" }
+    },
+    "codebase-auditor": {
+      "description": "Senior engineer who reverse-engineers architecture and reports risks, duplication, and maintainability issues",
+      "mode": "subagent",
+      "permission": { "read": "allow", "glob": "allow", "grep": "allow", "bash": "allow", "edit": "deny" }
+    },
+    "debug-investigator": {
+      "description": "Senior debugging engineer tracing root causes in production — never guesses",
+      "mode": "subagent",
+      "permission": { "read": "allow", "glob": "allow", "grep": "allow", "bash": "allow", "edit": "deny" }
+    },
+    "performance-optimizer": {
+      "description": "Senior performance engineer finding bottlenecks, memory leaks, and slow code",
+      "mode": "subagent",
+      "permission": { "read": "allow", "glob": "allow", "grep": "allow", "bash": "allow", "edit": "allow" }
+    },
+    "security-auditor": {
+      "description": "Senior security engineer auditing for vulnerabilities — defensive and read-only",
+      "mode": "subagent",
+      "permission": { "read": "allow", "glob": "allow", "grep": "allow", "bash": "allow", "edit": "deny" }
+    },
+    "devops-engineer": {
+      "description": "Senior DevOps engineer preparing applications for production deployment",
+      "mode": "subagent",
+      "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "bash": "allow" }
+    },
+    "ux-designer": {
+      "description": "Senior UI/UX designer who produces implementation-ready design specs before any code is written",
+      "mode": "subagent",
+      "permission": { "read": "allow", "glob": "allow", "grep": "allow", "edit": "allow", "bash": "deny" }
+    }
+  }
+}

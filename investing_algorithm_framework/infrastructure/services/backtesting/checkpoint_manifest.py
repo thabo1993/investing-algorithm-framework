@@ -28,9 +28,15 @@ import hashlib
 import inspect
 import json
 import logging
+import re
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
+# default object reprs embed a per-process memory address
+# ("<Foo object at 0x1A2B...>"), which would make the manifest hash
+# different on every run and mark every checkpoint stale on resume
+_MEMORY_ADDRESS_RE = re.compile(r" at 0x[0-9A-Fa-f]+")
 
 # Attributes ignored when fingerprinting a strategy instance. These are
 # either internal state, transient runtime objects, or the algorithm_id
@@ -58,9 +64,10 @@ def _safe_repr(value: Any) -> str:
     implement ``__eq__`` / ``__hash__``.
     """
     try:
-        return json.dumps(value, sort_keys=True, default=repr)
+        out = json.dumps(value, sort_keys=True, default=repr)
     except Exception:
-        return repr(value)
+        out = repr(value)
+    return _MEMORY_ADDRESS_RE.sub("", out)
 
 
 def _strategy_params_fingerprint(strategy: Any) -> Dict[str, str]:

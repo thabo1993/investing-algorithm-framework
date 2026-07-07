@@ -86,6 +86,7 @@ Most quant frameworks stop at "here's your backtest result." You get a number, m
 - 📦 **[Custom `.iafbt` Backtest Bundle Format](https://coding-kitties.github.io/investing-algorithm-framework/Data/backtest_data)** — An explicit, versioned, compressed, language-portable container (zstd + msgpack with magic-byte header) plus a separate parquet index for fast filtering without loading. ~21× smaller and ~27× fewer files than standard filebased directory layouts, with parallel I/O for fast load/save of large amounts of backtests.
 - 🗄️ **[Tiered Backtest Storage Layer](examples/storage_layer_demo/README.md)** — Manage thousands of `.iafbt` bundles with a Tier-1 SQLite index (sub-100 ms ranks/filters over 10k+ backtests), a swappable `BacktestStore` protocol (`LocalDirStore`, `LocalTieredStore`), content-addressed Tier-3 OHLCV deduplication, and a CLI (`iaf index` / `iaf list` / `iaf rank` / `iaf migrate-store`) that plugs straight into the HTML dashboard.
 - 🌐 **[Load External Data](https://coding-kitties.github.io/investing-algorithm-framework/Data/external-data)** — Fetch CSV, JSON, or Parquet from any URL with caching and auto-refresh
+- 💱 **[Forex / FX Trading](examples/forex/forex_strategy.py)** — Pip-based P&L calculation, swap/rollover cost tracking, margin utilization with leverage, 24/5 market calendar filtering, and Oanda live trading integration
 - � **[Per-Market Deposit Schedules & Portfolio Sync](https://coding-kitties.github.io/investing-algorithm-framework/Advanced%20Concepts/portfolio-sync)** — Declare recurring or one-shot external cash flows on a market with `deposit_schedule=` / `auto_sync=True`. Backtests simulate the deposits; live mode reconciles with the broker — same `context.sync_portfolio()` API in both modes.
 - 📝 **[Record Custom Variables](https://coding-kitties.github.io/investing-algorithm-framework/Advanced%20Concepts/recording-variables)** — Track any indicator or metric during backtests with `context.record()`
 - ⏱️ **Signal Cooldowns**: Throttle whipsaw with declarative `CooldownRule`s: per-symbol or portfolio-wide, side-aware (`trigger="sell"`, `blocks="buy"`), enforced identically by the vector and event-driven engines
@@ -428,7 +429,7 @@ Once a strategy proves itself in backtests, deploy it with the **same code path*
 
 - **No code rewrites** — your `TradingStrategy` runs identically in backtest, paper trading and live
 - **Cloud deploy** — `investing-algorithm-framework init --type aws_lambda` / `--type azure_function`
-- **Multiple exchanges & venues** — CCXT integration out of the box (Binance, Bitvavo, Coinbase, Kraken …), or plug in your own `OrderExecutor` for any broker / FIX / custom venue
+- **Multiple exchanges & venues** — CCXT integration out of the box (Binance, Bitvavo, Coinbase, Kraken …), Oanda integration for forex, or plug in your own `OrderExecutor` for any broker / FIX / custom venue
 - **Portfolio persistence** — trades, orders and positions survive restarts
 
 → [Live trading & deployment docs](https://coding-kitties.github.io/investing-algorithm-framework/Getting%20Started/deployment)
@@ -472,6 +473,14 @@ investing-algorithm-framework init
 # Or for cloud deployment
 investing-algorithm-framework init --type aws_lambda
 investing-algorithm-framework init --type azure_function
+```
+
+**Optional extras for forex / FX data providers:**
+
+```bash
+pip install investing-algorithm-framework[oanda]      # Oanda live trading
+pip install investing-algorithm-framework[fred]        # FRED macroeconomic data
+pip install investing-algorithm-framework[twelvedata]  # Twelve Data
 ```
 
 The [documentation](https://coding-kitties.github.io/investing-algorithm-framework/) provides guides and API reference. The [quick start](https://coding-kitties.github.io/investing-algorithm-framework/Getting%20Started/installation) will walk you through your first strategy.
@@ -670,6 +679,7 @@ report.save("my_report.html")
 | **[Portfolio Management](https://coding-kitties.github.io/investing-algorithm-framework/Getting%20Started/portfolio-configuration)** | Position tracking, trade management, persistence |
 | **[Cloud Deployment](https://coding-kitties.github.io/investing-algorithm-framework/Getting%20Started/deployment)** | Deploy to AWS Lambda, Azure Functions, or run as a web service |
 | **[Market Data Providers](https://coding-kitties.github.io/investing-algorithm-framework/Advanced%20Concepts/custom-data-providers)** | Built-in providers for CCXT, Yahoo Finance, Alpha Vantage, and Polygon — or build your own |
+| **[Forex / FX Trading](examples/forex/forex_strategy.py)** | Pip-based P&L, swap cost tracking, margin utilization, 24/5 market calendar filter, Oanda integration |
 | **[Load External Data](https://coding-kitties.github.io/investing-algorithm-framework/Data/external-data)** | Fetch CSV, JSON, or Parquet from any URL with caching, date parsing, and pre/post-processing |
 | **[Record Custom Variables](https://coding-kitties.github.io/investing-algorithm-framework/Advanced%20Concepts/recording-variables)** | Track any indicator or metric during backtests with `context.record()` |
 | **[Strategies](https://coding-kitties.github.io/investing-algorithm-framework/Getting%20Started/strategies)** | OHLCV, tickers, custom data — Polars and Pandas native |

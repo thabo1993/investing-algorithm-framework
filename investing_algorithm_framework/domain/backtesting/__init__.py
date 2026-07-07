@@ -23,6 +23,13 @@ from .bundle import (
     BUNDLE_EXT,
     BUNDLE_FORMAT_VERSION,
 )
+from .pip_pnl import calculate_pip_pnl, PipPnLResult
+from .swap_tracker import SwapTracker
+from .margin_utilization import (
+    calculate_margin_utilization,
+    MarginUtilizationResult,
+)
+from .forex_market import apply_market_calendar_filter
 
 __all__ = [
     "Backtest",
@@ -46,4 +53,10 @@ __all__ = [
     "open_bundle",
     "BUNDLE_EXT",
     "BUNDLE_FORMAT_VERSION",
+    "PipPnLResult",
+    "calculate_pip_pnl",
+    "SwapTracker",
+    "calculate_margin_utilization",
+    "MarginUtilizationResult",
+    "apply_market_calendar_filter",
 ]

@@ -42,7 +42,16 @@ pyarrow = ">=14.0.0"
 yahoo = ["yfinance"]
 alpha_vantage = ["alpha_vantage"]
 polygon = ["polygon-api-client"]
-all = ["yfinance", "alpha_vantage", "polygon-api-client"]
+fred = ["fredapi"]
+twelvedata = []
+exchange_rate_api = []
+oanda = []
+all = [
+    "yfinance",
+    "alpha_vantage",
+    "polygon-api-client",
+    "fredapi",
+]
 
 [tool.poetry.group.test.dependencies]
 coverage= "7.4.2"

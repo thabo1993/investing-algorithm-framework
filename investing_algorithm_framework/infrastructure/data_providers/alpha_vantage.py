@@ -77,6 +77,85 @@ class AlphaVantageOHLCVDataProvider(OHLCVDataProviderBase):
         start_date: datetime,
         end_date: datetime,
     ) -> pl.DataFrame:
+        if self._is_forex_symbol(symbol):
+            return self._download_forex_ohlcv(
+                symbol, time_frame, start_date, end_date
+            )
+        return self._download_stock_ohlcv(
+            symbol, time_frame, start_date, end_date
+        )
+
+    def _is_forex_symbol(self, symbol: str) -> bool:
+        return "/" in symbol or len(symbol.replace(".", "")) == 6
+
+    def _normalize_symbol(self, symbol: str) -> str:
+        return symbol.upper().replace("/", "").replace(".", "")
+
+    def _download_forex_ohlcv(
+        self,
+        symbol: str,
+        time_frame,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> pl.DataFrame:
+        _ensure_alpha_vantage()
+        from alpha_vantage.foreignexchange import ForeignExchange
+
+        api_key = self._get_api_key()
+        fx = ForeignExchange(key=api_key, output_format="pandas")
+        from_currency = symbol.split("/")[0]
+        to_currency = symbol.split("/")[1]
+
+        try:
+            df, _ = fx.get_currency_exchange_daily(
+                from_symbol=from_currency,
+                to_symbol=to_currency,
+                outputsize="full",
+            )
+        except Exception as e:
+            logger.error(f"Error downloading Alpha Vantage forex data: {e}")
+            return pl.DataFrame(
+                schema={
+                    "Datetime": pl.Datetime("us", "UTC"),
+                    "Open": pl.Float64,
+                    "High": pl.Float64,
+                    "Low": pl.Float64,
+                    "Close": pl.Float64,
+                    "Volume": pl.Float64,
+                }
+            )
+
+        if df.empty:
+            return pl.DataFrame(
+                schema={
+                    "Datetime": pl.Datetime("us", "UTC"),
+                    "Open": pl.Float64,
+                    "High": pl.Float64,
+                    "Low": pl.Float64,
+                    "Close": pl.Float64,
+                    "Volume": pl.Float64,
+                }
+            )
+
+        df = df.rename(columns={
+            "1. open": "Open",
+            "2. high": "High",
+            "3. low": "Low",
+            "4. close": "Close",
+            "5. volume": "Volume",
+        })
+        df = df.reset_index()
+        df = df.rename(columns={"date": "Datetime"})
+        df["Volume"] = 0
+        return self._finalize_dataframe(df, start_date, end_date)
+
+    def _download_stock_ohlcv(
+        self,
+        symbol: str,
+        time_frame,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> pl.DataFrame:
         _ensure_alpha_vantage()
         from alpha_vantage.timeseries import TimeSeries
 
@@ -141,6 +220,10 @@ class AlphaVantageOHLCVDataProvider(OHLCVDataProviderBase):
         })
         df = df.reset_index()
         df = df.rename(columns={"date": "Datetime"})
+        return self._finalize_dataframe(df, start_date, end_date)
+
+    @staticmethod
+    def _finalize_dataframe(df, start_date, end_date) -> pl.DataFrame:
 
         # Ensure timezone-aware UTC
         df["Datetime"] = pd.to_datetime(df["Datetime"])

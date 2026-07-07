@@ -594,7 +594,7 @@ class BacktestRun:
             if trade_id is not None and trade.id != trade_id:
                 continue
 
-            for sl in trade.stop_losses:
+            for sl in trade.stop_losses or []:
                 if isinstance(sl, TradeStopLoss):
                     if triggered is not None:
                         if sl.triggered == triggered:
@@ -625,7 +625,7 @@ class BacktestRun:
             if trade_id is not None and trade.id != trade_id:
                 continue
 
-            for tp in trade.take_profits:
+            for tp in trade.take_profits or []:
                 if isinstance(tp, TradeTakeProfit):
                     if triggered is not None:
                         if tp.triggered == triggered:

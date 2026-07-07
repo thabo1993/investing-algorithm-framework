@@ -20,6 +20,8 @@ from .data_providers import CSVOHLCVDataProvider, \
     PolygonOHLCVDataProvider
 from .order_executors import CCXTOrderExecutor
 from .portfolio_providers import CCXTPortfolioProvider
+from .oanda import OandaClient, OandaOHLCVDataProvider, \
+    OandaOrderExecutor, OandaPortfolioProvider
 
 __all__ = [
     "clear_db",
@@ -63,4 +65,8 @@ __all__ = [
     "AlphaVantageOHLCVDataProvider",
     "PolygonOHLCVDataProvider",
     "BacktestService",
+    "OandaClient",
+    "OandaOHLCVDataProvider",
+    "OandaOrderExecutor",
+    "OandaPortfolioProvider",
 ]

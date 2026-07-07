@@ -74,6 +74,7 @@ class App:
         self._blotter = None
         self._fx_rate_provider = None
         self._base_currency = None
+        self._forex_pair_configurations = []
 
     @property
     def context(self):
@@ -727,6 +728,30 @@ class App:
         portfolio_configuration_service = self.container \
             .portfolio_configuration_service()
         portfolio_configuration_service.add(portfolio_configuration)
+
+    def add_forex_pair_configuration(
+        self,
+        forex_pair_configuration=None,
+        **kwargs,
+    ):
+        """
+        Register a forex pair configuration for pip, swap, and margin
+        calculations. Accepts either a ForexPairConfiguration object or
+        keyword arguments matching its constructor.
+
+        Args:
+            forex_pair_configuration: Instance of ForexPairConfiguration
+
+        Returns:
+            None
+        """
+        from investing_algorithm_framework.domain.models.forex \
+            import ForexPairConfiguration
+
+        if forex_pair_configuration is None:
+            forex_pair_configuration = ForexPairConfiguration(**kwargs)
+
+        self._forex_pair_configurations.append(forex_pair_configuration)
 
     def task(
         self,

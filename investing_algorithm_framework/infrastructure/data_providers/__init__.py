@@ -51,14 +51,37 @@ except ImportError:
     )
     _polygon_available = False
 
+try:
+    from .fred import FREDOHLCVDataProvider
+    _fred_available = True
+except ImportError:
+    FREDOHLCVDataProvider = _make_optional_provider_placeholder(
+        "FREDOHLCVDataProvider", "fredapi", "fred"
+    )
+    _fred_available = False
+
+try:
+    from .twelve_data import TwelveDataOHLCVDataProvider
+    _twelvedata_available = True
+except ImportError:
+    TwelveDataOHLCVDataProvider = _make_optional_provider_placeholder(
+        "TwelveDataOHLCVDataProvider", "requests", "twelvedata"
+    )
+    _twelvedata_available = False
+
+try:
+    from .exchange_rate_api import ExchangeRateAPITickerDataProvider
+    _exchange_rate_api_available = True
+except ImportError:
+    ExchangeRateAPITickerDataProvider = _make_optional_provider_placeholder(
+        "ExchangeRateAPITickerDataProvider",
+        "requests",
+        "exchange_rate_api",
+    )
+    _exchange_rate_api_available = False
+
 
 def get_default_data_providers():
-    """
-    Function to get the default data providers.
-
-    Returns:
-        list: List of default data providers.
-    """
     providers = [
         CCXTOHLCVDataProvider(),
         CCXTTickerDataProvider(),
@@ -76,16 +99,19 @@ def get_default_data_providers():
     if _polygon_available:
         providers.append(PolygonOHLCVDataProvider())
 
+    if _fred_available:
+        providers.append(FREDOHLCVDataProvider())
+
+    if _twelvedata_available:
+        providers.append(TwelveDataOHLCVDataProvider())
+
+    if _exchange_rate_api_available:
+        providers.append(ExchangeRateAPITickerDataProvider())
+
     return providers
 
 
 def get_default_ohlcv_data_providers():
-    """
-    Function to get the default OHLCV data providers.
-
-    Returns:
-        list: List of default OHLCV data providers.
-    """
     providers = [
         CCXTOHLCVDataProvider(),
     ]
@@ -98,6 +124,12 @@ def get_default_ohlcv_data_providers():
 
     if _polygon_available:
         providers.append(PolygonOHLCVDataProvider())
+
+    if _fred_available:
+        providers.append(FREDOHLCVDataProvider())
+
+    if _twelvedata_available:
+        providers.append(TwelveDataOHLCVDataProvider())
 
     return providers
 
@@ -117,4 +149,7 @@ __all__ = [
     'YahooOHLCVDataProvider',
     'AlphaVantageOHLCVDataProvider',
     'PolygonOHLCVDataProvider',
+    'FREDOHLCVDataProvider',
+    'TwelveDataOHLCVDataProvider',
+    'ExchangeRateAPITickerDataProvider',
 ]
